@@ -23,9 +23,10 @@ module.exports = {
             }
         ], ( err, result ) => {
             if ( err ) throw err;
-            res.render('casts', {
-				result
-			})        
+//          res.render('casts', {
+//				result
+//			})     
+			res.send(result);
         })   
     },
 
@@ -62,19 +63,20 @@ module.exports = {
                 })
             }
         ], ( err, result ) => {
-            /**
-             * result = {totalNum,data: pagingdata}
-             */
+//          /**
+//           * result = {totalNum,data: pagingdata}
+//           */
            var { data, totalNum } = result;
 					 //data = result.data
 					 //result={ totalNum ,data:pagingdata }
 					 //result.totalNum            result.data
-            res.render('casts', {
-                result:data,
-                totalNum,
-                limitNum,
-                skipNum
-            })
+//          res.render('casts', {
+//              result:data,
+//              totalNum,
+//              limitNum,
+//              skipNum
+//          })
+			res.send(data);//data是数据，result是对象
         })
     },
 		deleteCastRoute : ( req, res, next ) => {
@@ -102,7 +104,28 @@ module.exports = {
 			})
 		},
 		addCastRoute : ( req, res, next ) => {
-				res.render('casts_add')
+			res.render('casts_add')
+		},
+		getCastsDetailRoute : ( req, res, next ) => {
+			var{ id } = url.parse( req.url, true ).query;
+				async.waterfall( [
+						( cb ) => {
+							MongoClient.connect( mongoUrl, (err, db ) => {
+								if ( err ) throw err;
+								cb( null, db );
+							})
+						},
+						( db, cb ) => {
+							db.collection('casts').find({id:id},{_id:0}).toArray( ( err, res) => {
+								if ( err ) throw err;
+								cb ( null, res);
+								db.close();
+							})
+						}
+				], ( err, result ) => {
+						if ( err ) throw err;
+						res.send(result);
+				})		
 		},
 		addCastsAction : ( req, res, next ) => {
 				//post提交的数据都在req.body中
@@ -200,8 +223,8 @@ module.exports = {
 				], ( err, result ) => {
 					if ( err ) throw err;
 					if( result == "ok"){
-						res.redirect('./castspaging?limitNum='+limitNum+'&skipNum='+skipNum);
-						//
+					res.redirect('./castspaging?limitNum='+limitNum+'&skipNum='+skipNum);
+						
 					}
 				})
 				

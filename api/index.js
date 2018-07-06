@@ -5,6 +5,7 @@ var router = express.Router();
 var casts = require('./casts.js');
 var directors = require('./directors.js');
 var movie = require('./movie.js');
+var user = require('./user.js');
 
 /* GET home page. */
 router.get('/', function( req, res, next ) {
@@ -19,6 +20,7 @@ router.post('/addCastsAction',casts.addCastsAction);
 router.get('/updateCastRoute',casts.updateCastRoute);//是get
 router.post('/updateCastsAction',casts.updateCastsAction);
 
+router.get('/getCastsDetailRoute',casts.getCastsDetailRoute);
 
 router.get('/directors', directors.defaultRoute );
 
@@ -29,5 +31,8 @@ router.get('/areaQueryMovieRoute', movie.areaQueryMovieRoute );//按区间查找
 router.get('/searchMovieRoute', movie.searchMovieRoute );
 router.get('/getYearMovie', movie.getYearMovie );
 
-
+router.get('/user', user.defaultRoute );
+router.get('/sendCode', user.sendCode );
+router.post('/register',user.register);
+router.post('/logining',user.logining);
 module.exports = router;
